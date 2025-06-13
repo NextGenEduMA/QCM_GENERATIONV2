@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مولد أسئلة الاختيار من متعدد باللغة العربية</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>مولد أسئلة الاختيار من متعدد باللغة العربية</h1>
+            <p class="subtitle">إنشاء أسئلة اختيار من متعدد مع التشكيل الكامل من النصوص العربية</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="alert-container"></div>
+        
+        <div class="main-content">
+            <div class="card">
+                <h2>اختيار المستند للاستخدام مع RAG</h2>
+                <p>اختر مستندًا لاستخدامه كمصدر للأسئلة، أو استخدم المستند الافتراضي (arabic.pdf)</p>
+                
+                <div class="document-selection">
+                    <div class="document-list" id="document-list">
+                        <div class="document-item selected" data-path="arabic.pdf">arabic.pdf (افتراضي)</div>
+                        <!-- سيتم إضافة المستندات الأخرى هنا ديناميكيًا -->
+                    </div>
+                </div>
+                
+                <form action="/upload-pdf" method="post" enctype="multipart/form-data" id="upload-form">
+                    <div class="file-upload">
+                        <label for="file-upload" class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                            <span>انقر لتحميل ملف PDF جديد</span>
+                        </label>
+                        <input type="file" id="file-upload" name="file" class="file-upload-input" accept=".pdf" onchange="showFileName(this)">
+                        <div id="file-name" class="file-name"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="upload-btn" style="display: none;">
+                        <i class="fas fa-upload"></i> تحميل الملف
+                    </button>
+                </form>
+                
+                <div id="training-status" style="display: none;"></div>
+            </div>
+            
+            <div class="card">
+                <h2>إنشاء أسئلة الاختيار من متعدد</h2>
+                <!-- واجهة إدخال النص -->
+                <div id="text-interface">
+                    <div class="form-group">
+                        <label for="raw-text">النص العربي</label>
+                        <textarea id="raw-text" placeholder="أدخل النص العربي هنا..." required></textarea>
+                    </div>
+                    
+                    <div id="paragraphs-container" class="paragraph-selection" style="display: none;">
+                        <h3>اختر الفقرات المراد استخدامها</h3>
+                        <div id="paragraphs-list"></div>
+                    </div>
+                </div>
+                
+                <form id="qcm-form">
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="num-questions">عدد الأسئلة</label>
+                            <select id="num-questions" name="num-questions">
+                                <option value="1">1 سؤال</option>
+                                <option value="2">2 سؤال</option>
+                                <option value="3" selected>3 أسئلة</option>
+                                <option value="4">4 أسئلة</option>
+                                <option value="5">5 أسئلة</option>
+                                <option value="6">6 أسئلة</option>
+                                <option value="7">7 أسئلة</option>
+                                <option value="8">8 أسئلة</option>
+                                <option value="9">9 أسئلة</option>
+                                <option value="10">10 أسئلة</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="model">النموذج</label>
+                            <select id="model" name="model">
+                                <option value="gpt-4o-mini" selected>GPT-4o Mini</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="text-level">مستوى النص</label>
+                            <select id="text-level" name="text-level">
+                                <option value="1">المستوى 1</option>
+                                <option value="2">المستوى 2</option>
+                                <option value="3">المستوى 3</option>
+                                <option value="4">المستوى 4</option>
+                                <option value="5">المستوى 5</option>
+                                <option value="6">المستوى 6</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="text-difficulty">صعوبة النص</label>
+                            <select id="text-difficulty" name="text-difficulty">
+                                <option value="easy">سهل</option>
+                                <option value="medium" selected>متوسط</option>
+                                <option value="hard">صعب</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="controls">
+                        <button type="submit" class="btn btn-primary" id="generate-btn">
+                            <i class="fas fa-magic"></i> إنشاء الأسئلة
+                        </button>
+                        
+                        <button type="button" id="clear-form" class="btn btn-warning">
+                            <i class="fas fa-eraser"></i> مسح النموذج
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>جاري إنشاء الأسئلة...</p>
+            </div>
+            
+            <div id="results" class="results">
+                <div class="card">
+                    <h2>الأسئلة المولدة</h2>
+                    <p>الإجابة الصحيحة مميزة باللون الأخضر</p>
+                    
+                    <div id="questions-container"></div>
+                    
+                    <div class="controls">
+                        <button id="export-json" class="btn btn-success">
+                            <i class="fas fa-download"></i> حفظ الأسئلة
+                        </button>
+                        
+                        <button id="generate-more" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> إنشاء المزيد من الأسئلة
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', path='/script.js') }}"></script>
+</body>
+</html>

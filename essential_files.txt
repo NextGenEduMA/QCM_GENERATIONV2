@@ -1,0 +1,32 @@
+Essential files for running the application:
+
+1. Core Application Files:
+- simple_app.py (main FastAPI application)
+- arabic_diacritized_qcm_v3.py (QCM generator)
+- models.py (data models)
+- db.py (database operations)
+- .env (environment variables)
+- .env.example (template for environment variables)
+
+2. Required Directories:
+- templates/ (HTML templates)
+- static/ (CSS and JavaScript files)
+- uploads/ (for uploaded PDF files)
+- Saved_qcms/ (for saved QCM results)
+
+3. Template Files:
+- templates/index.html
+- templates/results.html
+- templates/error.html
+- templates/upload_success.html
+- static/styles.css
+- static/script.js
+
+Files that can be safely removed:
+- All test files (test_*.py)
+- Debug files (debug_*.py, debug_*.json)
+- Older versions of scripts (arabic_diacritized_qcm.py, arabic_diacritized_qcm_v2.py)
+- Duplicate JSON files (*_Copy.json)
+- Example files (example.py)
+- Batch files not related to simple_app.py
+- Older README files (README-*.md)

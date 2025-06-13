@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نتائج توليد الأسئلة</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>مولد أسئلة الاختيار من متعدد باللغة العربية</h1>
+            <p class="subtitle">نتائج توليد الأسئلة</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="card">
+                <h2>الأسئلة المولدة</h2>
+                <p>الإجابة الصحيحة مميزة باللون الأخضر</p>
+                
+                <div id="questions-container">
+                    {% for question in questions %}
+                    <div class="question-card">
+                        <div class="question-text">{{ loop.index }}. {{ question.question }}</div>
+                        <ul class="choices">
+                            {% for choice in question.choices %}
+                            <li class="choice {% if choice == question.correct_answer %}correct{% endif %}">
+                                {{ ["أ", "ب", "ج", "د"][loop.index0] }}. {{ choice }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="controls">
+                    <button onclick="exportJSON()" class="btn btn-success">
+                        <i class="fas fa-download"></i> تصدير كملف JSON
+                    </button>
+                    
+                    <a href="/" class="btn btn-primary">
+                        <i class="fas fa-arrow-right"></i> العودة للصفحة الرئيسية
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function exportJSON() {
+            const questions = [];
+            document.querySelectorAll('.question-card').forEach((card, index) => {
+                const questionText = card.querySelector('.question-text').textContent.substring(card.querySelector('.question-text').textContent.indexOf('. ') + 2);
+                
+                const choices = [];
+                const choiceElements = card.querySelectorAll('.choice');
+                let correctAnswer = '';
+                
+                choiceElements.forEach(choice => {
+                    const choiceText = choice.textContent.substring(choice.textContent.indexOf('. ') + 2);
+                    choices.push(choiceText);
+                    
+                    if (choice.classList.contains('correct')) {
+                        correctAnswer = choiceText;
+                    }
+                });
+                
+                questions.push({
+                    question: questionText,
+                    correct_answer: correctAnswer,
+                    choices: choices
+                });
+            });
+            
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(questions, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "qcms.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+    </script>
+</body>
+</html>

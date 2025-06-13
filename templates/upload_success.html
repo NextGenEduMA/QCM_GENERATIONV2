@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تم التحميل بنجاح</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>مولد أسئلة الاختيار من متعدد باللغة العربية</h1>
+            <p class="subtitle">تم تحميل ملف التدريب بنجاح</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="card">
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <h2>تم تحميل ملف التدريب بنجاح</h2>
+                    <p>تم تحميل الملف <strong>{{ filename }}</strong> وإضافته إلى نظام التدريب.</p>
+                </div>
+                
+                <div class="controls">
+                    <a href="/" class="btn btn-primary">
+                        <i class="fas fa-arrow-right"></i> العودة للصفحة الرئيسية
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
