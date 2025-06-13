@@ -17,6 +17,8 @@ L'application utilise une architecture RAG (Retrieval Augmented Generation):
 1. **Indexation**: Les documents PDF sont traités et indexés avec FAISS
 2. **Récupération**: Pour une requête donnée, les passages les plus pertinents sont récupérés
 3. **Génération**: OpenAI génère des QCMs basés sur les passages récupérés
+   Voici le diagram de notre architecture :
+   ![Image](https://github.com/user-attachments/assets/7a0ee10a-8ccf-49f1-980d-4c1701dca465)
 
 ## Installation
 ```
